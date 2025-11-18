@@ -1,0 +1,10 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="80" cy="80" r="75" fill="#00BFAE" stroke="#009688" stroke-width="8"/>
+  <g>
+    <path d="M80,20 A60,60 0 1,1 79.99,20.001" fill="#FFD600"/>
+    <path d="M80,20 L80,80" stroke="#F44336" stroke-width="7"/>
+    <circle cx="80" cy="80" r="25" fill="#FFF176" stroke="#D32F2F" stroke-width="4"/>
+    <text x="80" y="85" font-family="Arial" font-size="22" fill="#009688" text-anchor="middle" font-weight="bold">SPIN</text>
+  </g>
+  <text x="80" y="150" font-family="Arial" font-size="20" fill="#D32F2F" text-anchor="middle" font-weight="bold">Berhadiah</text>
+</svg>
