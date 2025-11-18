@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Spin Berhadiah!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f6f8; text-align: center; }
+        .container { max-width: 500px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px #ccc; }
+        h1 { color: #e91e63; }
+        #wheelcanvas { margin: 30px auto 15px auto; display: block; }
+        .btn-spin { background: #009688; color: #fff; padding: 15px 40px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; }
+        .result { margin-top: 25px; font-size: 22px; color: #3e2723; }
+        .back { margin-top: 15px; }
+        .back a { text-decoration: none; color: #607d8b; font-weight: bold;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Putar Spin Berhadiah</h1>
+        <canvas id="wheelcanvas" width="350" height="350"></canvas>
+        <br>
+        <button class="btn-spin" id="spin-button">Putar Roda!</button>
+        <div class="result" id="result"></div>
+        <div class="back"><a href="index.html">&larr; Kembali</a></div>
+    </div>
+<script>
+    // Daftar hadiah
+    const rewards = [
+        "Voucher Diskon 10%",
+        "Hadiah Misteri",
+        "Gratis Ongkir",
+        "Bonus Poin",
+        "Merchandise",
+        "Spin Lagi",
+        "Payung Unik",
+        "Topi Keren"
+    ];
+
+    // Visualisasi roda
+    const canvas = document.getElementById('wheelcanvas');
+    const ctx = canvas.getContext('2d');
+    const totalRewards = rewards.length;
+    const wheelRadius = canvas.width/2;
+    let startAngle = 0;
+
+    function drawWheel() {
+        for (let i = 0; i < totalRewards; i++) {
+            let angle = startAngle + i * 2 * Math.PI / totalRewards;
+            ctx.beginPath();
+            ctx.moveTo(wheelRadius, wheelRadius);
+            ctx.arc(wheelRadius, wheelRadius, wheelRadius, angle, angle + 2*Math.PI/totalRewards);
+            ctx.fillStyle = i % 2 === 0 ? "#ffe082" : "#80deea";
+            ctx.fill();
+            ctx.save();
+            ctx.translate(wheelRadius, wheelRadius);
+            ctx.rotate(angle + Math.PI/totalRewards);
+            ctx.textAlign = "right";
+            ctx.font = "16px Arial";
+            ctx.fillStyle = "#d32f2f";
+            ctx.fillText(rewards[i], wheelRadius-10, 0);
+            ctx.restore();
+        }
+        // Penanda
+        ctx.beginPath();
+        ctx.moveTo(wheelRadius, 0);
+        ctx.lineTo(wheelRadius - 20, 30);
+        ctx.lineTo(wheelRadius + 20, 30);
+        ctx.closePath();
+        ctx.fillStyle = "#e91e63";
+        ctx.fill();
+    }
+
+    drawWheel();
+
+    // Spin logic
+    let isSpinning = false;
+    document.getElementById('spin-button').addEventListener('click', function() {
+        if (isSpinning) return;
+        isSpinning = true;
+        document.getElementById('result').textContent = '';
+        let spinAngle = Math.random() * 6 + 6; // Total putaran (acak dan cukup banyak)
+        let currentAngle = startAngle;
+        let lastTs = null;
+        let duration = 3600; // ms
+        let endAngle = startAngle + spinAngle * Math.PI;
+        function animate(ts) {
+            if (!lastTs) lastTs = ts;
+            let elapsed = ts - lastTs;
+            if (elapsed >= duration) elapsed = duration;
+            let percent = elapsed / duration;
+            let eased = percent < 1 ? -Math.cos(percent * Math.PI) / 2 + 0.5 : 1; // easeout
+            currentAngle = startAngle + (endAngle - startAngle) * eased;
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            startAngle = currentAngle;
+            drawWheel();
+            if (percent < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                // Tentukan hadiah
+                let finalAngle = startAngle % (2*Math.PI);
+                let index = totalRewards - Math.floor(finalAngle / (2*Math.PI/totalRewards)) - 1;
+                if (index < 0) index += totalRewards;
+                document.getElementById('result').textContent = `Selamat! Anda mendapatkan: ${rewards[index]}`;
+                isSpinning = false;
+            }
+        }
+        requestAnimationFrame(animate);
+    });
+</script>
+</body>
+</html>
